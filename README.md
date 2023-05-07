@@ -47,3 +47,8 @@ int main(int, char**)
     w.run();
 }
 ```
+访问静态资源效果：
+![image](https://user-images.githubusercontent.com/93439675/236688059-f46fc3bc-391f-4f2a-8daa-6cfc6469cb0e.png)
+
+项目html资源全部来自：
+[TinyWebServer](https://github.com/qinguoyi/TinyWebServer/tree/master)
