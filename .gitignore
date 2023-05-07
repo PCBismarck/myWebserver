@@ -2,3 +2,5 @@ build/
 .VSCodeCounter/
 .vscode/
 .cache/
+logfile/
+myWebserver.code-workspace

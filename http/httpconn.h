@@ -11,17 +11,21 @@
 // TODO 根据设置情况发送响应报文
 class HTTPConn
 {
-    using Request = std::shared_ptr<HTTPRequest>;
-    using Response = std::shared_ptr<HTTPResponse>;
-
 public:
     HTTPConn()
     {
         is_close = true;
         is_resp_setted = false;
+        m_req = new HTTPRequest;
+        m_resp = new HTTPResponse;
     }
 
-    ~HTTPConn() { closeConn(); }
+    ~HTTPConn()
+    {
+        delete m_req;
+        delete m_resp;
+        closeConn();
+    }
 
     void init(int socket_fd, const sockaddr_in& addr)
     {
@@ -29,32 +33,32 @@ public:
         m_addr = addr;
         is_close = false;
         is_resp_setted = false;
+        m_resp->init();
     }
 
     int getFd() const { return m_socket_fd; }
 
-    void setRequest(Request& req) { m_req = std::move(req); }
+    // void setRequest(HTTPRequest& req) { m_req = std::move(req); }
 
-    void setResponse(Response& resp)
-    {
-        m_resp = std::move(resp);
-        is_resp_setted = true;
-    }
+    // void setResponse(HTTPResponse& resp)
+    // {
+    //     m_resp = std::move(resp);
+    //     is_resp_setted = true;
+    // }
 
-    Request getRequest() const { return m_req; }
+    void respReady() { is_resp_setted = true; }
 
-    Response getResponse() const { return m_resp; }
+    HTTPRequest* getRequest() { return m_req; }
+
+    HTTPResponse* getResponse() { return m_resp; }
 
     void closeConn()
     {
         if (is_close)
             return;
-        m_req.reset();
-        m_resp.reset();
         is_close = true;
         is_resp_setted = false;
         close(m_socket_fd);
-        // LOG_INFO("close fd %d", m_socket_fd);
     }
 
     bool isClose() const { return is_close; }
@@ -67,8 +71,8 @@ private:
     int m_socket_fd;
     struct sockaddr_in m_addr;
 
-    Request m_req;
-    Response m_resp;
+    HTTPRequest* m_req;
+    HTTPResponse* m_resp;
 };
 
 #endif   // __HTTPCONN_H__

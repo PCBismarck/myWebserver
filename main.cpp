@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <tuple>
 #include "http/httpconn.h"
 #include "http/httpinfo.h"
 #include "http/httpresponse.h"
@@ -21,26 +22,28 @@ int main(int, char**)
 
     router->setDefaultHandler([](HTTPConn* conn) {
         LOG_DEBUG("client[%d] Handler default was called", conn->getFd());
-        auto resp = std::make_shared<HTTPResponse>(
-            HTTPBase::Version{1, 1}, HTTPBase::StatusCode::NOT_FOUND,
-            "Not Found");
+        auto resp = conn->getResponse();
+        resp->setStatusCode(HTTPBase::StatusCode::NOT_FOUND);
+        resp->setDescription("404 Not Found");
         std::string body = "404 Not Found\n";
         resp->setBody(body);
         resp->addHeader("Content-Type", "text/plain");
         resp->addHeader("Content-Length", std::to_string(body.size()));
-        conn->setResponse(resp);
+        conn->respReady();
     });
 
     router->Get("/hello", [](HTTPConn* conn) {
         LOG_DEBUG("client[%d] Handler GET /hello was called", conn->getFd());
-        auto resp = std::make_shared<HTTPResponse>(
-            HTTPBase::Version{1, 1}, HTTPBase::StatusCode::OK, "OK");
+        auto resp = conn->getResponse();
+        resp->setVersion(1, 1);
+        resp->setStatusCode(HTTPBase::StatusCode::OK);
+        resp->setDescription("OK");
         std::string body = "Hello World!\n";
         resp->setBody(body);
         resp->addHeader("Content-Type", "text/plain");
         resp->addHeader("Content-Length", std::to_string(body.size()));
-        conn->setResponse(resp);
+        conn->respReady();
     });
-    w.init(std::move(router), 9123, 3, 16, false, LogLevel::DEBUG);
+    w.init(std::move(router), 9123, 3, 8, false, LogLevel::INFO);
     w.run();
 }

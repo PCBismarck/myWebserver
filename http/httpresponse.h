@@ -3,21 +3,41 @@
 
 #include <string>
 #include <unordered_map>
+#include <utility>
 
 #include "httpinfo.h"
 
 class HTTPResponse
 {
 public:
+    HTTPResponse() = default;
     HTTPResponse(HTTPBase::Version v, HTTPBase::StatusCode s, std::string desc)
         : keep_alive(true), is_access_resource(false), version(v), status(s),
           description(desc), headers(), file_path(), body(){};
+
+    void init()
+    {
+        is_access_resource = false;
+        is_headers_send = false;
+    }
 
     void setKeepAlive(bool is_keep_alive) { keep_alive = is_keep_alive; }
     void setIsAccessResource(std::string file_path_)
     {
         is_access_resource = true;
         file_path = file_path_;
+    }
+
+    void setVersion(int major, int minor)
+    {
+        version.major = major;
+        version.minor = minor;
+    }
+
+    void setStatusCode(HTTPBase::StatusCode s) { status = s; }
+    void setDescription(std::string&& desc)
+    {
+        description = std::forward<std::string>(desc);
     }
 
     void addHeader(std::string key, std::string value) { headers[key] = value; }
