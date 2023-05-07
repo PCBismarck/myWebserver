@@ -21,7 +21,8 @@ void Epoll::addFd(int fd_toadd, uint32_t events)
     epoll_event event{0};
     event.data.fd = fd_toadd;
     event.events = events;
-    assert(0 == epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd_toadd, &event));
+    int ret = epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd_toadd, &event);
+    assert(0 == ret);
     // epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd_toadd, &event);
     // LOG_ERROR("ADDFD: %d  error:%s", fd_toadd, strerror(errno));
     // assert(ret == 0);
@@ -35,7 +36,8 @@ void Epoll::delFd(int fd_todel)
     // epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd_todel, &event);
     // LOG_INFO("DELFD: %d  error:%s", fd_todel, strerror(errno));
     // assert(ret == 0);
-    assert(0 == epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd_todel, &event));
+    int ret = epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd_todel, &event);
+    assert(0 == ret);
 }
 
 void Epoll::modFd(int fd_tomod, uint32_t events)
@@ -44,7 +46,8 @@ void Epoll::modFd(int fd_tomod, uint32_t events)
     epoll_event event{0};
     event.data.fd = fd_tomod;
     event.events = events;
-    assert(0 == epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd_tomod, &event));
+    int ret = epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd_tomod, &event);
+    assert(0 == ret);
 }
 
 int Epoll::wait(int timeoutMS)
