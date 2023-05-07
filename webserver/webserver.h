@@ -45,8 +45,8 @@ private:
     void handleResponse(HTTPConn* conn);
 
     int readOnce(int connfd, char* buf, int len);
-    int addBaseInfo(char* buf, int len, std::shared_ptr<HTTPResponse> resp);
-    char* makeBodyInfo(int& len, std::shared_ptr<HTTPResponse> resp);
+    int addBaseInfo(char* buf, int len, HTTPResponse* resp);
+    char* makeBodyInfo(int& len, HTTPResponse* resp);
     bool sendResponse(int connfd, struct iovec* iv, uint32_t total_len);
 
     void setNonBlocking(int fd);

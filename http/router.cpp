@@ -1,5 +1,6 @@
 #include "router.h"
 #include <memory>
+#include "../log/log.h"
 #include "httpconn.h"
 #include "httpinfo.h"
 #include "httpresponse.h"
@@ -29,15 +30,21 @@ bool Router::getStaticResourceHandler(std::string path, CallBackFunc& cb)
 {
     cb = std::bind(
         [new_path = path](HTTPConn* conn) {
-            std::shared_ptr<HTTPResponse> resp = std::make_shared<HTTPResponse>(
-                conn->getRequest()->version(), HTTPBase::StatusCode::OK, "OK");
+            auto resp = conn->getResponse();
             auto req = conn->getRequest();
+            const auto& v = req->version();
+            resp->setVersion(v.major, v.minor);
+            // resp->setVersion(, int minor)
+            resp->setStatusCode(HTTPBase::StatusCode::OK);
+            resp->setDescription("OK");
             for (auto& [key, value] : req->headersAll()) {
                 resp->addHeader(key, value);
             }
             resp->setKeepAlive(req->isKeepAlive());
             resp->setIsAccessResource(new_path);
-            conn->setResponse(resp);
+            LOG_DEBUG("Get Static resource handler: file[%s]",
+                      new_path.c_str());
+            conn->respReady();
         },
         std::placeholders::_1);
     return true;
@@ -50,7 +57,6 @@ bool Router::getMethodHandler(HTTPBase::Method method, std::string path,
     case HTTPBase::Method::GET:
         if (m_get.find(path) == m_get.end())
             break;
-        ;
         cb = m_get[path];
         return true;
     case HTTPBase::Method::UNKNOWN:

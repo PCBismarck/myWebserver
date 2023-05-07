@@ -244,13 +244,13 @@ void WebServer::handleRequest(HTTPConn* conn)
         return;
 
     // 设置request
-    auto req = std::make_shared<HTTPRequest>();
+    auto req = conn->getRequest();
     ReqStatus status = req->parse(buf, has_read);
     if (status != ReqStatus::REQ_SUCCESS) {
         LOG_ERROR("parse request failure(status = %d)", status);
         return;
     }
-    conn->setRequest(req);
+    // conn->setRequest(req);
     LOG_DEBUG("client[%d] setted request", connfd)
 
     // 根据router获取handler
@@ -274,8 +274,7 @@ void WebServer::handleRequest(HTTPConn* conn)
     }
 }
 
-int WebServer::addBaseInfo(char* buf, int len,
-                           std::shared_ptr<HTTPResponse> resp)
+int WebServer::addBaseInfo(char* buf, int len, HTTPResponse* resp)
 {
     // 添加响应的状态行信息
     int has_write = 0;
@@ -296,7 +295,7 @@ int WebServer::addBaseInfo(char* buf, int len,
     return has_write;
 }
 
-char* WebServer::makeBodyInfo(int& len, std::shared_ptr<HTTPResponse> resp)
+char* WebServer::makeBodyInfo(int& len, HTTPResponse* resp)
 {
     // 添加响应的body信息
     // 访问文件资源
@@ -363,7 +362,7 @@ void WebServer::handleResponse(HTTPConn* conn)
     int connfd = conn->getFd();
     int bytes_write = 0, has_write = 0;
     struct iovec iv[2];
-    const auto resp = conn->getResponse();
+    auto resp = conn->getResponse();
 
     // 准备响应的body信息
     int body_len = 0;
