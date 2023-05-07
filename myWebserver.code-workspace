@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../TinyWebServer"
+		},
+		{
+			"path": "../muduo/muduo"
+		},
+		{
+			"path": "../sylar/sylar"
+		},
+		{
+			"path": "../WebServer/code"
+		}
+	],
+	"settings": {
+		"github-enterprise.uri": "https://gitclone.com"
+	}
+}

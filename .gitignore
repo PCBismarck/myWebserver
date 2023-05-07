@@ -1,1 +1,4 @@
-bulid/
+build/
+.VSCodeCounter/
+.vscode/
+.cache/
