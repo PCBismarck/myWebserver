@@ -1,13 +1,13 @@
 # myWebserver
 - 基于epoll实现的reactor模式的linux服务器，采用非阻塞socket+线程池+事件处理的方式
 - 用LRU实现定时器队列，通过回调实现定时器的触发
-- 实现了router类，可以通过设置static属性完成url到本地文件夹的映射，快速实现资源访问功能
-- 通过在router中进行handler函数的注册，实现业务的平滑拓展，无需关注框架底层专注于业务逻辑
+- 参照Gin的API设计，实现了Router类，可以通过设置static属性完成url到本地文件夹的映射，快速实现资源访问功能
+- 通过在Router类中进行handler函数的注册，实现业务的平滑拓展，无需关注框架底层专注于业务逻辑
 - 基于阻塞队列实现了异步日志系统
-- 基于正则表达式进行http协议的解析
+- 基于正则表达式实现http协议的解析
 
 快速启动/配置服务器
-```
+```c++
 int main(int, char**)
 {
     WebServer w;
