@@ -33,11 +33,11 @@ public:
 
     int getFd() const { return m_socket_fd; }
 
-    void setRequest(Request& req) { m_req = req; }
+    void setRequest(Request& req) { m_req = std::move(req); }
 
     void setResponse(Response& resp)
     {
-        m_resp = resp;
+        m_resp = std::move(resp);
         is_resp_setted = true;
     }
 
