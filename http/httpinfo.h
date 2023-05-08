@@ -7,6 +7,7 @@
 namespace HTTPBase
 {
 using Header = std::unordered_map<std::string, std::string>;
+using Query = std::unordered_map<std::string, std::string>;
 
 struct Version {
     int major;

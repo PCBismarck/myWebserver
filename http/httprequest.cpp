@@ -1,5 +1,7 @@
 #include "httprequest.h"
 #include <regex>
+#include <string>
+#include "../log/log.h"
 #include "httpinfo.h"
 
 // 使用正则表达式分析请求内容
@@ -22,6 +24,21 @@ ReqStatus HTTPRequest::parse(const char* buf, int len)
         start = result[0].second;
     } else {
         return ReqStatus::REQ_INCOMPLETE;
+    }
+
+    // 进一步解析path提取query
+    if (m_path.find('?') != m_path.npos) {
+        std::string query = m_path.substr(m_path.find('?'));
+        m_path = m_path.substr(0, m_path.find('?'));
+        const char* query_start = query.c_str();
+        std::regex request_query_regex("[?&]([^&= ]*)=([^&= ]*)");
+        while (std::regex_search(query_start, result, request_query_regex)) {
+            std::string key = std::string(result[1].first, result[1].second);
+            std::string value = std::string(result[2].first, result[2].second);
+            m_query[key] = value;
+            LOG_DEBUG("query: %s=%s", key.c_str(), value.c_str());
+            query_start = result[0].second;
+        }
     }
 
     // 解析host port

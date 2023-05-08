@@ -6,6 +6,25 @@
 
 using namespace std;
 
+void testQuery()
+{
+    std::string m_path("/hello?name=world&age=18&blank=");
+    std::unordered_map<std::string, std::string> m_query;
+    std::cmatch result;
+    if (m_path.find('?') != m_path.npos) {
+        std::string query = m_path.substr(m_path.find('?'));
+        m_path = m_path.substr(0, m_path.find('?'));
+        const char* query_start = query.c_str();
+        std::regex request_query_regex("[?&]([^&= ]*)=([^&= ]*)");
+        while (std::regex_search(query_start, result, request_query_regex)) {
+            std::string key = std::string(result[1].first, result[1].second);
+            std::string value = std::string(result[2].first, result[2].second);
+            m_query[key] = value;
+            query_start = result[0].second;
+        }
+    }
+}
+
 void testReplace()
 {
     unordered_map<string, string> map;
@@ -94,7 +113,7 @@ hello world\r\n\r\n";
 
 int main(void)
 {
-    testReplace();
-
+    // testReplace();
+    testQuery();
     return 0;
 }

@@ -34,6 +34,13 @@ public:
         }
         return "application/x-www-form-urlencoded";
     }
+    std::string query(std::string key_)
+    {
+        if (m_query.find(key_) != m_query.end()) {
+            return m_query[key_];
+        }
+        return "";
+    }
     const std::string& body() const { return m_body; }
     bool isKeepAlive() const { return keep_alive; }
 
@@ -47,6 +54,7 @@ private:
     uint32_t m_port;
     HTTPBase::Header m_headers;
     std::string m_body;
+    HTTPBase::Query m_query;
 };
 
 #endif   // __HTTPREQUEST_H__

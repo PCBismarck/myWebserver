@@ -38,12 +38,14 @@ int main(int, char**)
         resp->setVersion(1, 1);
         resp->setStatusCode(HTTPBase::StatusCode::OK);
         resp->setDescription("OK");
-        std::string body = "Hello World!\n";
+        std::string query = conn->getRequest()->query("name");
+        LOG_INFO("query: %s", query.c_str());
+        std::string body = query + " Hello World!\n";
         resp->setBody(body);
         resp->addHeader("Content-Type", "text/plain");
         resp->addHeader("Content-Length", std::to_string(body.size()));
         conn->respReady();
     });
-    w.init(std::move(router), 9123, 3, 8, false, LogLevel::INFO);
+    w.init(std::move(router), 9123, 3, 8, true, LogLevel::INFO);
     w.run();
 }
